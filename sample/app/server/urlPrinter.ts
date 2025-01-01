@@ -1,5 +1,5 @@
-import { getRequest } from 'remix-scoped'
+import { scopedRequest } from "remix-scoped";
 export const urlPrinter = async () => {
-    const request = await getRequest();
-    return request.url;
-}
+  const request = await scopedRequest();
+  return request.url;
+};

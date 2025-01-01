@@ -2,23 +2,11 @@
   "name": "remix-scoped",
   "version": "0.0.1",
   "description": "Request-level scoping of key remix resources",
+  "main": "./src/index.ts",
   "files": [
-    "lib/**/*"
+    "./src/index.ts",
+    "./src/scopedLoader.ts"
   ],
-  "types": "./lib/cjs/types/index.d.ts",
-  "main": "./lib/cjs/index.js",
-  "exports": {
-    ".": {
-      "import": {
-        "types": "./lib/esm/types/index.d.ts",
-        "default": "./lib/esm/index.mjs"
-      },
-      "require": {
-        "types": "./lib/cjs/types/index.d.ts",
-        "default": "./lib/cjs/index.js"
-      }
-    }
-  },
   "keywords": [
     "remix",
     "bun",
@@ -31,7 +19,7 @@
   "sideEffects": false,
   "license": "MIT",
   "scripts": {
-    "test": "test",
+    "test": "node --import tsx --test ./**/*.test.ts",
     "clean": "rm -rf ./lib",
     "build": "npm run clean && npm run build:esm && npm run build:cjs",
     "build:esm": "tsc -p ./tsconfig.esm.json && mv lib/esm/index.js lib/esm/index.mjs",
@@ -39,10 +27,13 @@
     "prepack": "npm run build"
   },
   "dependencies": {
+    "tsx": "^4.19.2",
     "typescript": "^5.7.2"
   },
+  "peerDependencies": {
+    "@remix-run/node": "^2.13.1"
+  },
   "devDependencies": {
-    "@remix-run/node": "^2.13.1",
     "@types/node": "^22.10.3"
   }
 }

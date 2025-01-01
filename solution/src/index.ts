@@ -1,1 +1,9 @@
-export { getRequest, scopedLoader } from "./scopedLoader";
+export {
+  scopedRequest,
+  scopedLoader,
+  scopedAction,
+  scopedParams,
+  scopedContext,
+  isAction,
+  isLoader,
+} from "./scopedLoader";
