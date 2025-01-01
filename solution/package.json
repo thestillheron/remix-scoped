@@ -1,0 +1,48 @@
+{
+  "name": "remix-scoped",
+  "version": "0.0.1",
+  "description": "Request-level scoping of key remix resources",
+  "files": [
+    "lib/**/*"
+  ],
+  "types": "./lib/cjs/types/index.d.ts",
+  "main": "./lib/cjs/index.js",
+  "exports": {
+    ".": {
+      "import": {
+        "types": "./lib/esm/types/index.d.ts",
+        "default": "./lib/esm/index.mjs"
+      },
+      "require": {
+        "types": "./lib/cjs/types/index.d.ts",
+        "default": "./lib/cjs/index.js"
+      }
+    }
+  },
+  "keywords": [
+    "remix",
+    "bun",
+    "nodejs"
+  ],
+  "author": {
+    "name": "Jamie Butler",
+    "email": "jamie.tsh@outlook.com"
+  },
+  "sideEffects": false,
+  "license": "MIT",
+  "scripts": {
+    "test": "test",
+    "clean": "rm -rf ./lib",
+    "build": "npm run clean && npm run build:esm && npm run build:cjs",
+    "build:esm": "tsc -p ./tsconfig.esm.json && mv lib/esm/index.js lib/esm/index.mjs",
+    "build:cjs": "tsc -p ./tsconfig.cjs.json",
+    "prepack": "npm run build"
+  },
+  "dependencies": {
+    "typescript": "^5.7.2"
+  },
+  "devDependencies": {
+    "@remix-run/node": "^2.13.1",
+    "@types/node": "^22.10.3"
+  }
+}
