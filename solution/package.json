@@ -1,6 +1,6 @@
 {
   "name": "remix-scoped",
-  "version": "0.0.5",
+  "version": "0.0.6",
   "description": "Request-level scoping of key remix resources",
   "main": "./src/index.ts",
   "files": [
@@ -15,6 +15,9 @@
   "author": {
     "name": "Jamie Butler",
     "email": "jamie.tsh@outlook.com"
+  },
+  "bugs": {
+    "url": "https://github.com/thestillheron/remix-scoped/issues"
   },
   "sideEffects": false,
   "license": "MIT",
