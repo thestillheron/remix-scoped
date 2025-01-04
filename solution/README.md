@@ -39,6 +39,8 @@ export const getUser = async () => {
 };
 ```
 
+You can also use `isLoader` and `isAction` to determine whether you are running in the context of an action execution, or a loader execution.
+
 ## Gotchas
 
 ### Security

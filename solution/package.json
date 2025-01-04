@@ -1,6 +1,6 @@
 {
   "name": "remix-scoped",
-  "version": "0.0.4",
+  "version": "0.0.5",
   "description": "Request-level scoping of key remix resources",
   "main": "./src/index.ts",
   "files": [
