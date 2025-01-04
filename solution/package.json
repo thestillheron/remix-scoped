@@ -1,6 +1,6 @@
 {
   "name": "remix-scoped",
-  "version": "0.0.2",
+  "version": "0.0.3",
   "description": "Request-level scoping of key remix resources",
   "main": "./src/index.ts",
   "files": [
@@ -25,6 +25,10 @@
     "build:esm": "tsc -p ./tsconfig.esm.json && mv lib/esm/index.js lib/esm/index.mjs",
     "build:cjs": "tsc -p ./tsconfig.cjs.json",
     "prepack": "npm run build"
+  },
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/thestillheron/remix-scoped"
   },
   "dependencies": {
     "tsx": "^4.19.2",
