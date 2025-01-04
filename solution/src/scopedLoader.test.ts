@@ -1,47 +1,92 @@
-import { scopedLoader, scopedRequest } from "./scopedLoader"
+import {
+  isAction,
+  isLoader,
+  scopedAction,
+  scopedLoader,
+  scopedRequest,
+} from "./scopedLoader";
 import test, { describe } from "node:test";
 import assert from "node:assert";
-const dummyLoader = scopedLoader(async ({ request }: { request: Request}) => {
-    let requestFromScope = await scopedRequest();
-    const timeout = Number(new URL(requestFromScope.url).searchParams.get("timeout"));
-    await delay(timeout);
+const dummyLoader = scopedLoader(async ({ request }: { request: Request }) => {
+  let requestFromScope = await scopedRequest();
+  const timeout = Number(
+    new URL(requestFromScope.url).searchParams.get("timeout")
+  );
+  await delay(timeout);
 
-    // We have to get it from scope again, otherwise we're just dealing with a local
-    // copy of the data which won't prove anything
-    requestFromScope = await scopedRequest();
-    const testValue = requestFromScope.headers.get("x-test-value");
-    console.log("testValue", testValue)
-    return testValue;
+  // We have to get it from scope again, otherwise we're just dealing with a local
+  // copy of the data which won't prove anything
+  requestFromScope = await scopedRequest();
+  const testValue = requestFromScope.headers.get("x-test-value");
+  console.log("testValue", testValue);
+  return testValue;
 });
 
 function delay(timeout: number) {
-   return new Promise<undefined>(function(resolve) {
-       setTimeout(function() {
-           resolve(undefined);
-       }, timeout);
-   });
+  return new Promise<undefined>(function (resolve) {
+    setTimeout(function () {
+      resolve(undefined);
+    }, timeout);
+  });
 }
 
 describe("scoped requests", () => {
   test("do not suffer from race conditions", async () => {
     const slowFirstRequest = {
-        url: 'http://www.test.com?timeout=2000',
-        headers: new Headers({
-            "x-test-value": "slowFirstRequest"
-        })
+      url: "http://www.test.com?timeout=2000",
+      headers: new Headers({
+        "x-test-value": "slowFirstRequest",
+      }),
     } as Request;
     const fastSecondRequest = {
-        url: 'http://www.test.com?timeout=50',
-        headers: new Headers({
-            "x-test-value": "fastSecondRequest"
-        })
+      url: "http://www.test.com?timeout=50",
+      headers: new Headers({
+        "x-test-value": "fastSecondRequest",
+      }),
     } as Request;
     const firstPromise = dummyLoader({ request: slowFirstRequest });
     await delay(50);
     const secondPromise = dummyLoader({ request: fastSecondRequest });
-    const [firstResponse, secondResponse] = await Promise.all([firstPromise, secondPromise]);
+    const [firstResponse, secondResponse] = await Promise.all([
+      firstPromise,
+      secondPromise,
+    ]);
 
     assert.equal(firstResponse, "slowFirstRequest");
     assert.equal(secondResponse, "fastSecondRequest");
-  })
+  });
+});
+
+describe("isAction", () => {
+  test("correctly identifies action context", async () => {
+    const action = scopedAction(async (args: { request: any }) => {
+      return await isAction();
+    });
+    const loader = scopedLoader(async (args: { request: any }) => {
+      return await isAction();
+    });
+
+    const actionResult = await action({ request: {} });
+    const loaderResult = await loader({ request: {} });
+
+    assert.equal(actionResult, true);
+    assert.equal(loaderResult, false);
+  });
+});
+
+describe("isLoader", () => {
+  test("correctly identifies loader context", async () => {
+    const action = scopedAction(async (args: { request: any }) => {
+      return await isLoader();
+    });
+    const loader = scopedLoader(async (args: { request: any }) => {
+      return await isLoader();
+    });
+
+    const actionResult = await action({ request: {} });
+    const loaderResult = await loader({ request: {} });
+
+    assert.equal(actionResult, false);
+    assert.equal(loaderResult, true);
+  });
 });

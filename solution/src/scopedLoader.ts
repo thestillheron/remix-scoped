@@ -9,6 +9,9 @@ import {
 import { type AsyncLocalStorage } from "node:async_hooks";
 
 export interface RemixRequestScope {
+  // Differentiating loader args vs. action args feels a little silly
+  // Under the hood the typings are exactly the same
+  // But remix treats them as separate things that are coincidentally the same, so I will too
   loaderArgs: LoaderFunctionArgs | undefined;
   actionArgs: ActionFunctionArgs | undefined;
 }
@@ -60,12 +63,12 @@ export const scopedAction = <T extends ActionFunction>(loader: T): T => {
   const higherOrderAction: ActionFunction = async (args) => {
     const storage = await getScopeStorage();
     return storage.run(
-      { loaderArgs: args, actionArgs: undefined },
+      { loaderArgs: undefined, actionArgs: args },
       async () => {
         const store = storage.getStore();
-        if (!store?.loaderArgs)
+        if (!store?.actionArgs)
           throw new Error("Should have loader args in the loader scope");
-        return loader(store.loaderArgs);
+        return loader(store.actionArgs);
       }
     );
   };
@@ -130,7 +133,7 @@ export const scopedParams = async (): Promise<AppLoadContext> => {
 
 export const isLoader = async () => {
   const store = (await getScopeStorage()).getStore();
-  return !!store?.actionArgs;
+  return !!store?.loaderArgs;
 }
 
 export const isAction = async () => {
